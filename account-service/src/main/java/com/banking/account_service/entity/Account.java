@@ -53,7 +53,7 @@ public class Account {
 	private AccountStatus accountStatus;
 	
 	@Column(nullable=false,precision=15,scale=2)
-	private BigDecimal ballence;
+	private BigDecimal balance;
 	
 	@Column(nullable=false,precision=15,scale=2)
 	private BigDecimal dailyTransactionLimit;
