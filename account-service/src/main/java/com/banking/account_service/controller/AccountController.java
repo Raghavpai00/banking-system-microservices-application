@@ -84,6 +84,6 @@ public ResponseEntity<String> deductBalance(
 public ResponseEntity<String>creditBalance(
 		@PathVariable String accountNumber,@RequestParam BigDecimal amount){
 	 accountService.creditBalance(accountNumber,amount);
-	 return ResponseEntity.ok("balance credited successfully");
+	 return ResponseEntity.ok("BALANCE CREDITED SUCESSFULLY");
 }
 }
