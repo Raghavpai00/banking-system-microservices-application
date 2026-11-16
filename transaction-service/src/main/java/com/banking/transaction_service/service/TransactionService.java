@@ -1,6 +1,10 @@
 package com.banking.transaction_service.service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.apache.kafka.common.Uuid;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
 import com.banking.transaction_service.Entity.Transaction;
@@ -24,8 +28,7 @@ public class TransactionService {
 private final TransactionRepository transactionRepository;
 private final AccountServiceClient accountServiceClient;
 
-private final kafkaTemplate<String,Object> kafkaTemplate;
-
+private final KafkaTemplate<String, Object> kafkaTemplate;
 //kafka topic variables
 
 private static final String TRANSACTION_INITIATED_TOPIC="transaction_initiated";
@@ -52,7 +55,7 @@ public TransactionResponse transfer(TransferRequest request) {
 	);
 	
 	//deduct from sender via feign client
-	AccountServiceClient.deductBalance(
+	accountServiceClient.deductBalance(
 			request.getSenderAccountNumber(),
 			request.getAmount());
 	
@@ -82,6 +85,23 @@ public TransactionResponse transfer(TransferRequest request) {
 	
 	return mapToResponse(savedTransaction);
 }
+
+public TransactionResponse getTransaction(String transactionId) {
+	return mapToResponse(transactionRepository
+			.findById(transactionId)
+			.orElseThrow(()-> new RuntimeException(
+					"Transaction not found: "+transactionId
+					)));
+}
+
+public List<TransactionResponse> getTransactionHistory(String accountNumber){
+	return transactionRepository
+			.findBySenderAccountNumberOrderByCreatedAtDesc(accountNumber)
+			.stream()
+			.map(this::mapToResponse)
+			.collect(Collectors.toList());
+}
+
 
 private TransactionResponse mapToResponse(Transaction transaction) {
 	TransactionResponse response=new TransactionResponse();

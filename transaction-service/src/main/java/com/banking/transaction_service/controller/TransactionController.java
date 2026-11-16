@@ -23,7 +23,7 @@ import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-@RestController
+@RestController 
 @RequestMapping("/api/v1/transaction")
 @Slf4j
 @RequiredArgsConstructor
@@ -33,17 +33,19 @@ public class TransactionController {
 	private final TransactionService transactionService;
 	
 	@PostMapping("/transfer")
-	public ResponseEntity<TransactionResponse> transafer(
+	public ResponseEntity<TransactionResponse> transfer(
 		@Valid @RequestBody TransferRequest request	){
 		return ResponseEntity.status(HttpStatus.CREATED)
 				.body(transactionService.transfer(request));
 		
 	}
 	@GetMapping("/{transactionId}")
-	public ResponseEntity<Transaction> getTransaction(
-			@PathVariable String transactionId){
-		
-		return ResponseEntity.ok(transactionService.getTransaction(transactionId));
+	public ResponseEntity<TransactionResponse> getTransaction(
+	        @PathVariable String transactionId) {
+
+	    return ResponseEntity.ok(
+	        transactionService.getTransaction(transactionId)
+	    );
 	}
 	
 	@GetMapping("/account/{accountNumber}")
@@ -51,7 +53,7 @@ public class TransactionController {
 		return ResponseEntity.ok(transactionService.getTransactionHistory(accountNumber));
 	}
 	
-	@PostMapping("/{transactionId}/verify")
+	@PostMapping("/{transactionId}/verify")//implementing  at last
 	public ResponseEntity<TransactionResponse>verifyOTP(@PathVariable String transactionId,@RequestParam String otp){
 	log.info("OTP verification request - transaction: {}",transactionId);
 	ResponseEntity.ok(transactionService.verifyOTP(transactionId,otp));
